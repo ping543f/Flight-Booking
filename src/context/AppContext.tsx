@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Booking, Flight, Route, SearchParams } from '../types';
+import { demoUsers, demoRoutes, demoFlights, demoBookings, demoFinances } from '../data/mockData';
 
 interface AppContextType {
   // Auth
@@ -42,19 +43,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [allBookings, setAllBookings] = useState<Booking[]>(() => {
     const saved = localStorage.getItem('bookings');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [availableFlights, setAvailableFlights] = useState<Flight[]>(() => {
-    const saved = localStorage.getItem('flights');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) return JSON.parse(saved);
+    return demoBookings;
   });
   const [allRoutes, setAllRoutes] = useState<Route[]>(() => {
     const saved = localStorage.getItem('routes');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) return JSON.parse(saved);
+    return demoRoutes;
   });
+  const [availableFlights, setAvailableFlights] = useState<Flight[]>(() => {
+    const saved = localStorage.getItem('flights');
+    if (saved) return JSON.parse(saved);
+    return demoFlights;
+  });
+  // Finance data for admin dashboard
+  React.useEffect(() => {
+    if (!localStorage.getItem('expenses')) {
+      localStorage.setItem('expenses', JSON.stringify(demoFinances));
+    }
+  }, []);
   const [allUsers, setAllUsers] = useState<User[]>(() => {
     const saved = localStorage.getItem('users');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) return JSON.parse(saved);
+    // If no users in localStorage, initialize with demo users
+    return demoUsers;
   });
 
   // Save all data to localStorage on change
@@ -81,7 +93,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const login = (email: string, password: string): boolean => {
     // Simple auth - in production, this would be handled by a backend
-    const user = allUsers.find(u => u.email === email);
+    const user = allUsers.find(u => u.email === email && u.password === password);
     if (user) {
       setCurrentUser(user);
       localStorage.setItem('currentUser', JSON.stringify(user));
