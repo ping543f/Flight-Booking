@@ -40,7 +40,7 @@ SkyBook is a full-featured flight booking system built with React, TypeScript, V
 
 1. **Clone the repository:**
    ```sh
-   git clone <your-repo-url>
+   git clone https://github.com/ping543f/Flight-Booking.git
    cd Flight-Booking
    ```
 
